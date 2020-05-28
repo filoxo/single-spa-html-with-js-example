@@ -16,7 +16,7 @@ This example is modeled after a simple usecase: obtaining cookie consent from yo
 - `git clone git@github.com:filoxo/single-spa-html-with-js-example.git`
 - `yarn install`
 - `yarn start`
-- Include this module in your import map
+- Include this module in your import map (typically in the root-config)
 
     ```js
     {
