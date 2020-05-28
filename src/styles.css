@@ -1,0 +1,37 @@
+#cookie-consent {
+  position: fixed;
+  bottom: 1rem;
+  left: 1rem;
+  max-width: 280px;
+  padding: 1rem;
+  border: 1px solid steelblue;
+  border-radius: .5rem;
+}
+
+#cookie-consent {
+  transform: none;
+  transition: 350ms ease-in-out;
+}
+
+#cookie-consent.h {
+  transform: translateY(calc(100% + 1rem));
+}
+
+#cookie-consent .m {
+  margin: 0;
+  margin-bottom: 1rem;
+}
+
+#cookie-consent .b {
+  background: steelblue;
+  padding: .5rem 1rem;
+  border-radius: .5rem;
+  border: none;
+  color: #fff;
+  font-size: 1rem;
+}
+
+#cookie-consent .l {
+  display: flex;
+  justify-content: flex-end;
+}
