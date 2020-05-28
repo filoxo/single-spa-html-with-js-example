@@ -4,7 +4,7 @@ import "./styles.css"; // styles are global so these are based on IDs
 
 const htmlLifecycles = singleSpaHtml({
   domElementGetter: () => {
-    const id = "single-spa-application:@org/cookie-consent";
+    const id = "single-spa-application:@example/cookie-consent";
     let el = document.getElementById(id);
     if (!el) {
       el = document.createElement("div");
