@@ -26,7 +26,7 @@ This example is modeled after a simple usecase: obtaining cookie consent from yo
       }
     }
     ```
-- Register as an application in your root config
+- [Register as a single-spa application](https://single-spa.js.org/docs/api/#registerapplication) in your root config
 
     ```js
     registerApplication({
