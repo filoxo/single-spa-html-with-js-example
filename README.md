@@ -1,4 +1,4 @@
-# single-spa-html example
+# single-spa-html with js example
 
 This is an example application that uses [single-spa-html](https://single-spa.js.org/docs/ecosystem-html-web-components/) that is enhanced with plain JavaScript.
 
