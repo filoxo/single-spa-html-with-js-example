@@ -18,18 +18,29 @@ module.exports = {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: {
-          loader: "babel-loader"
-        }
+          loader: "babel-loader",
+        },
       },
       {
         test: /\.html$/i,
-        use: ['html-loader'],
+        use: ["html-loader"],
       },
       {
         test: /\.css$/i,
-        use: ['style-loader', 'css-loader'],
+        use: [
+          "style-loader",
+          {
+            loader: "css-loader",
+            options: {
+              importLoaders: 1,
+            },
+          },
+          {
+            loader: "postcss-loader",
+          },
+        ],
       },
-    ]
+    ],
   },
   devtool: "sourcemap",
   devServer: {
@@ -39,5 +50,5 @@ module.exports = {
     },
     disableHostCheck: true,
   },
-  externals: ["single-spa"]
+  externals: ["single-spa"],
 };
