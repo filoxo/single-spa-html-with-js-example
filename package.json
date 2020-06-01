@@ -16,6 +16,7 @@
     "@babel/preset-env": "^7.9.6",
     "babel-loader": "^8.1.0",
     "css-loader": "^3.5.3",
+    "cssnano": "^4.1.10",
     "file-loader": "^6.0.0",
     "html-loader": "^1.1.0",
     "postcss-loader": "^3.0.0",
