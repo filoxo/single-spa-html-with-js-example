@@ -60,4 +60,8 @@ $color: steelblue;
   .justify-end {
     justify-content: flex-end;
   }
+
+  .align-center {
+    align-items: center;
+  }
 }
