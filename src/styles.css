@@ -11,6 +11,10 @@ $color: steelblue;
   transform: none;
   transition: 350ms ease-in-out;
 
+  &.hide {
+    transform: translateY(calc(100% + 1rem));
+  }
+
   .m-0 {
     margin: 0;
   }
@@ -56,8 +60,4 @@ $color: steelblue;
   .justify-end {
     justify-content: flex-end;
   }
-}
-
-#cookie-consent.hide {
-  transform: translateY(calc(100% + 1rem));
 }
