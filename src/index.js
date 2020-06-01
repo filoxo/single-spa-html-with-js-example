@@ -22,8 +22,11 @@ export const mount = (props) => {
     : htmlLifecycles.mount(props).then(() => {
         // extend single-spa mount lifecycle; after single-spa has mounted the template, enhance with plain JavaScript
         const dialog = document.querySelector(`#cookie-consent`), // get outermost node
-          noSellCheckbox = dialog.querySelector("#cookie-consent-no-sell"), // get checkbox node
-          acceptBtn = dialog.querySelector("#cookie-consent-accept"); // get button node
+          noSellCheckbox =
+            dialog && dialog.querySelector("#cookie-consent-no-sell"), // get checkbox node
+          acceptBtn = dialog && dialog.querySelector("#cookie-consent-accept"); // get button node
+
+        if (!dialog || !noSellCheckbox || !acceptBtn) return;
 
         acceptBtn.addEventListener("click", () => {
           // bind and handle click event on button
