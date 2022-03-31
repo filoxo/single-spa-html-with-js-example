@@ -1,3 +1,5 @@
+import singleSpaHtml from "single-spa-html"; // single-spa lifecycles helper
+import template from "./template.html"; // separate html template provides better syntax highlighting
 import styles from "./styles.css"; // CSS Modules; pitfall: ensure that your CSS is scoped else they will be *global*
 
 // Use CSS modules in html template by interpolating them
@@ -14,56 +16,61 @@ const interpolateTemplate = () => {
 const htmlLifecycles = singleSpaHtml({
   domElementGetter: () => {
     const id = "single-spa-application:@example/cookie-consent";
-    let el = document.getElementById(id);
-    if (!el) {
-      el = document.createElement("div");
-      el.id = id;
-      document.body.prepend(el); // single-spa automatically _appends_, but this content should be _prepended_ for accessibility
+    let container = document.getElementById(id);
+    if (!container) {
+      container = document.createElement("div");
+      container.id = id;
+      document.body.prepend(container); // single-spa automatically _appends_, but this content should be _prepended_ for accessibility
     }
-    return el;
+    return container;
   },
-  template,
+  template: interpolateTemplate(),
 });
 
 /*
-There's a fair amount going on here.
-First, we're exporting the `mount` lifecycle function for single-spa to use.
-Next, `mount` checks for previous user consent and resolves early if they have.
-If not, then we use the original mount function provided by the helper (above), 
-  and after it resolves we perform our setup logic to enable the interactive elements.
+This seems complicated so let's break it down:
+1. this mount function will be used by single-spa as part of the application lifecycle
+2. it wraps htmlLifecycles.mount to in order to conditionally render the html (based on prior consent);
+  this may not be needed for many applications! If instead always mount the same content this
+  could instead be implemented as `export const mount = [htmlLifecycles.mount, myOtherMountFn]`
+3. If no prior consent, then await the original mount function and bind behaviors the interactive elements
 */
-export const mount = (props) => {
-  return localStorage.getItem("cookie-consent") // look for value; this could instead be a cookie if you wanted to send it back and forth to your server.
-    ? Promise.resolve(null) // don't render anything if they have already "consented"
-    : htmlLifecycles.mount(props).then(() => {
-        // extend single-spa mount lifecycle; after single-spa has mounted the template, enhance with plain JavaScript
-        const dialog = document.querySelector("#cookie-consent"), // get outermost node
-          noSellCheckbox =
-            dialog && dialog.querySelector("#cookie-consent-no-sell"), // get checkbox node
-          acceptBtn = dialog && dialog.querySelector("#cookie-consent-accept"); // get button node
+export const mount = async (props) => {
+  // uses localStorage for convenience but could be anything to check.
+  // for example, this could be implemented with cookies if you wanted to send it back and forth to your server.
+  const hasPriorConsent = Boolean(localStorage.getItem("cookie-consent")); // check for prior consent set by app
 
-        if (!dialog || !noSellCheckbox || !acceptBtn) return;
+  if (hasPriorConsent) return Promise.resolve(null); // don't render anything if user has already consented
 
-        // bind and handle click event on button
-        acceptBtn.addEventListener("click", () => {
-          // create consent data object
-          const consent = {
-            date: new Date().toJSON(),
-            noSell: noSellCheckbox.checked,
-          };
-          localStorage.setItem("cookie-consent", JSON.stringify(consent));
-          dialog.classList.add("hide"); // add hidden class to animate out
-        });
-        
-        // dialog starts out with 'hide' class; this removes it so that it animates in.
-        setTimeout(() => dialog.classList.remove("hide")); 
+  await htmlLifecycles.mount(props); // wait for single-spa to mount the application
 
-        dialog.addEventListener("transitionend", () => {
-          // listen for when animation ends and set hidden attribute so that they remain in sync
-          dialog.classList.contains("hide") &&
-            dialog.setAttribute("hidden", "");
-        });
-      });
+  // after app mount, bind behaviors the interactive elements with plain JavaScript
+  const dialog = document.querySelector("#cookie-consent"),
+    noSellCheckbox = dialog?.querySelector("#cookie-consent-no-sell"),
+    acceptBtn = dialog?.querySelector("#cookie-consent-accept");
+
+  if (!dialog || !noSellCheckbox || !acceptBtn) return; // sanity checks
+
+  // bind and handle click event on button
+  acceptBtn.addEventListener("click", function handleConsentAction() {
+    // create consent data object
+    const consent = JSON.stringify({
+      date: new Date().toJSON(),
+      noSell: noSellCheckbox.checked,
+    });
+    localStorage.setItem("cookie-consent", consent);
+    dialog.classList.add(styles.hide); // animate out
+  });
+
+  // remove hide class so that dialog animates in
+  setTimeout(function onInit() {
+    dialog.classList.remove(styles.hide);
+  });
+
+  dialog.addEventListener("transitionend", function handleTransitionEnd() {
+    // listen for when animation ends and set hidden attribute so that they remain in sync
+    dialog.classList.contains(styles.hide) && dialog.setAttribute("hidden", "");
+  });
 };
 
 export const { bootstrap, unmount } = htmlLifecycles; // export other lifecycles as-is
