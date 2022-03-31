@@ -1,69 +1,69 @@
-/* SASS syntax is enabled by precss plugin */
+/* Values (https://webpack.js.org/loaders/css-loader/#values) */
+@value v-color: steelblue;
 
-$color: steelblue;
-
-#cookie-consent {
-  border: 1px solid $color;
+.container {
+  border: 1px solid v-color;
   border-radius: 0.5rem;
   bottom: 1rem;
+  font: inherit;
   left: 1rem;
   max-width: 280px;
   padding: 1rem;
   position: fixed;
   transform: none;
   transition: 350ms ease-in-out;
+}
 
-  &.hide {
-    transform: translateY(calc(100% + 1rem));
-  }
+.hide {
+  transform: translateY(calc(100% + 1rem));
+}
 
-  .m-0 {
-    margin: 0;
-  }
+.m_0 {
+  margin: 0;
+}
 
-  .mb-1 {
-    margin-bottom: 1rem;
-  }
+.mb_1 {
+  margin-bottom: 1rem;
+}
 
-  .bg-blue {
-    background: $color;
-  }
+.bg_blue {
+  background: v-color;
+}
 
-  .py-1 {
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-  }
+.py_1 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
 
-  .px-2 {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
+.px_2 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
 
-  .rounded-1 {
-    border-radius: 0.5rem;
-  }
+.rounded_1 {
+  border-radius: 0.5rem;
+}
 
-  .border-none {
-    border: none;
-  }
+.border_none {
+  border: none;
+}
 
-  .text-white {
-    color: #fff;
-  }
+.text_white {
+  color: #fff;
+}
 
-  .text-base {
-    font-size: 1rem;
-  }
+.text_base {
+  font-size: 1rem;
+}
 
-  .flex {
-    display: flex;
-  }
+.flex {
+  display: flex;
+}
 
-  .justify-end {
-    justify-content: flex-end;
-  }
+.justify_end {
+  justify-content: flex-end;
+}
 
-  .align-center {
-    align-items: center;
-  }
+.items_center {
+  align-items: center;
 }
