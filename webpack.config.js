@@ -1,14 +1,15 @@
 const path = require("path");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const StandaloneSingleSpaPlugin = require("standalone-single-spa-webpack-plugin");
 const packageJson = require("./package.json");
 
 const isAnyOf = (value, list) => list.includes(value);
 
-module.exports = (opts) => {
-  let isProduction =
-    opts.argv && (opts.argv.p || opts.argv.mode === "production");
+module.exports = (env, argv) => {
+  let prodMode = argv?.p || argv?.mode === "production";
 
   return {
-    mode: isProduction ? "production" : "development",
+    mode: prodMode ? "production" : "development",
     output: {
       filename: `index.js`,
       libraryTarget: "system",
@@ -52,6 +53,14 @@ module.exports = (opts) => {
         },
       ],
     },
+    plugins: [
+      // These plugins enable standalone mode for local development
+      !prodMode && new HtmlWebpackPlugin(),
+      new StandaloneSingleSpaPlugin({
+        appOrParcelName: packageJson.name,
+        disabled: prodMode,
+      }),
+    ].filter(Boolean),
     devtool: "source-map",
     devServer: {
       compress: true,
