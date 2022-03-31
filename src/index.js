@@ -2,6 +2,8 @@ import singleSpaHtml from "single-spa-html"; // single-spa lifecycles helper
 import template from "./template.html"; // separate html template provides better syntax highlighting
 import styles from "./styles.css"; // CSS Modules; pitfall: ensure that your CSS is scoped else they will be *global*
 
+const ONE_MINUTE = 60000;
+
 // Use CSS modules in html template by interpolating them
 const interpolateTemplate = () => {
   const cssModuleClassNames = Object.keys(styles).join("|");
@@ -37,11 +39,22 @@ This seems complicated so let's break it down:
 */
 export const mount = async (props) => {
   // uses localStorage for convenience but could be anything to check.
-  // for example, this could be implemented with cookies if you wanted to send it back and forth to your server.
-  const hasPriorConsent = Boolean(localStorage.getItem("cookie-consent")); // check for prior consent set by app
+  // for example, this could be implemented with cookies if you wanted to send it back and forth to your server
+  const priorConsentOrNull = localStorage.getItem("cookie-consent");
+  const hasPriorConsent = Boolean(priorConsentOrNull); // check for prior consent set by app
 
-  if (hasPriorConsent) return Promise.resolve(null); // don't render anything if user has already consented
-
+  if (hasPriorConsent) {
+    const { date } = JSON.parse(priorConsentOrNull);
+    const priorConsentDate = new Date(date).getTime();
+    // consent may expire so request it again if needed
+    // this also allows me to clear the value for demo purposes
+    const priorConsentExpired = priorConsentDate - Date.now() > ONE_MINUTE;
+    if (priorConsentExpired) {
+      localStorage.removeItem("cookie-consent"); // re-obtain consent if expired
+    } else {
+      return Promise.resolve(null); // don't render anything if user prior consent & it has not expired
+    }
+  }
   await htmlLifecycles.mount(props); // wait for single-spa to mount the application
 
   // after app mount, bind behaviors the interactive elements with plain JavaScript
@@ -71,6 +84,8 @@ export const mount = async (props) => {
     // listen for when animation ends and set hidden attribute so that they remain in sync
     dialog.classList.contains(styles.hide) && dialog.setAttribute("hidden", "");
   });
+
+  // TODO: implement a way to revoke consent (execise left to reader)
 };
 
 export const { bootstrap, unmount } = htmlLifecycles; // export other lifecycles as-is
